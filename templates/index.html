@@ -5,16 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Monitor</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card { margin-bottom: 20px; }
+        .progress { height: 20px; }
+        .icon { font-size: 2rem; margin-right: 10px; }
+        .section-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 10px; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1 class="mt-5">System Information</h1>
-        <div class="mt-4">
-            <ul class="list-group">
-                {% for key, value in system_info.items() %}
-                    <li class="list-group-item"><strong>{{ key }}:</strong> {{ value }}</li>
-                {% endfor %}
-            </ul>
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <a class="navbar-brand" href="#">RPi-Monitor <span class="text-danger">(yourhost)</span></a>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Version -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-title"><i class="fa fa-linux icon"></i>Version</div>
+                        <p><strong>Processor:</strong> {{ system_info.hardware_version }}</p>
+                        <p><strong>Distribution:</strong> {{ system_info.linux_version }}</p>
+                        <!-- Add more details as needed -->
+                    </div>
+                </div>
+                <!-- Uptime -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-title"><i class="fa fa-clock icon"></i>Uptime</div>
+                        <p>{{ system_info.uptime }}</p>
+                    </div>
+                </div>
+                <!-- CPU -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-title"><i class="fa fa-tachometer-alt icon"></i>CPU</div>
+                        <p><strong>Load:</strong> {{ system_info.cpu_load }}%</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ system_info.cpu_load }}%;" aria-valuenow="{{ system_info.cpu_load }}" aria-valuemin="0" aria-valuemax="100">{{ system_info.cpu_load }}%</div>
+                        </div>
+                        <p class="mt-2"><strong>Temperature:</strong> {{ system_info.cpu_temperature }}°C</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Middle Column -->
+            <div class="col-md-5">
+                <!-- Temperature -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-title"><i class="fa fa-thermometer-half icon"></i>Temperature</div>
+                        <p><strong>CPU Temperature:</strong> {{ system_info.cpu_temperature }}°C</p>
+                        <!-- Add a gauge or progress bar if you want -->
+                    </div>
+                </div>
+                <!-- Memory -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-title"><i class="fa fa-memory icon"></i>Memory</div>
+                        <p><strong>Usage:</strong> {{ system_info.memory_usage }}%</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ system_info.memory_usage }}%;" aria-valuenow="{{ system_info.memory_usage }}" aria-valuemin="0" aria-valuemax="100">{{ system_info.memory_usage }}%</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Swap -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-title"><i class="fa fa-exchange-alt icon"></i>Swap</div>
+                        <p><strong>Usage:</strong> {{ system_info.swap_usage }}%</p>
+                        <div class="progress">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ system_info.swap_usage }}%;" aria-valuenow="{{ system_info.swap_usage }}" aria-valuemin="0" aria-valuemax="100">{{ system_info.swap_usage }}%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Column -->
+            <div class="col-md-4">
+                <!-- Storage -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-title"><i class="fa fa-hdd icon"></i>Storage</div>
+                        {% for mount, usage in system_info.storage_usage.items() %}
+                            <p><strong>{{ mount }}:</strong> {{ usage }}%</p>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-secondary" role="progressbar" style="width: {{ usage }}%;" aria-valuenow="{{ usage }}" aria-valuemin="0" aria-valuemax="100">{{ usage }}%</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- Servers (Placeholder) -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-title"><i class="fa fa-server icon"></i>Servers</div>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                ssh <span class="badge badge-success">OK</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                rpinmonitor <span class="badge badge-success">OK</span>
+                            </li>
+                            <!-- Add more services as needed -->
+                        </ul>
+                    </div>
+                </div>
+                <!-- WiFi -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="section-title"><i class="fa fa-wifi icon"></i>WiFi</div>
+                        <p>{{ system_info.wifi_status }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
