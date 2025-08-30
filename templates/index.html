@@ -3,26 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Raspberry Pi Monitor</title>
+    <title>System Monitor</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-5">Raspberry Pi System Monitor</h1>
+        <h1 class="mt-5">System Information</h1>
         <div class="mt-4">
-            <h2>System Information</h2>
             <ul class="list-group">
-                <li class="list-group-item">Linux Version: {{ linux_version }}</li>
-                <li class="list-group-item">Hardware Version: {{ hardware_version }}</li>
-                <li class="list-group-item">Uptime: {{ uptime }}</li>
-                <li class="list-group-item">CPU Load: {{ cpu_load }}%</li>
-                <li class="list-group-item">CPU Temperature: {{ cpu_temp }}°C</li>
-                <li class="list-group-item">Memory Usage: {{ memory_usage }}%</li>
-                <li class="list-group-item">Swap Usage: {{ swap_usage }}%</li>
-                <li class="list-group-item">SD Card Usage: {{ sd_usage }}%</li>
-                <li class="list-group-item">Other Storage Usage: {{ other_storage_usage }}%</li>
-                <li class="list-group-item">Server Status: {{ server_status }}</li>
-                <li class="list-group-item">Wi-Fi Status: {{ wifi_status }}</li>
+                {% for key, value in system_info.items() %}
+                    <li class="list-group-item"><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
             </ul>
         </div>
     </div>
