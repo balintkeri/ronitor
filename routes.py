@@ -31,7 +31,6 @@ def get_system_info():
         'storage_usage': storage,
         'wifi_status': wifi_status
     }
-    print(system_info)
     return system_info
 
 def get_cpu_temperature():
