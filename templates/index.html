@@ -138,6 +138,15 @@
                 document.getElementById('cpu_frequency').textContent = data.cpu_frequency;
                 document.getElementById('cpu_voltage').textContent = data.cpu_voltage;
                 // Repeat for other fields...
+                document.querySelector('.progress-bar.bg-danger').style.width = ((data.cpu_temperature - 20) / 100) * 100 + '%';
+                document.querySelector('.progress-bar.bg-danger').setAttribute('aria-valuenow', data.cpu_temperature);
+                document.querySelector('.progress-bar.bg-danger').textContent = data.cpu_temperature + '°C';
+                document.querySelector('.card-body .section-title i.fa-thermometer-half').parentElement.nextElementSibling.textContent = 'CPU Temperature: ' + data.cpu_temperature + '°C';
+
+                document.querySelector('.progress-bar.bg-success').style.width = data.memory_usage + '%';
+                document.querySelector('.progress-bar.bg-success').setAttribute('aria-valuenow', data.memory_usage);
+                document.querySelector('.progress-bar.bg-success').textContent = data.memory_usage + '%';
+                document.querySelector('.card-body .section-title i.fa-memory').parentElement.nextElementSibling.textContent = 'Usage: ' + data.memory_usage + '%';
             });
     }
 
