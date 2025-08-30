@@ -6,6 +6,14 @@ import subprocess
 
 bp = Blueprint('main', __name__)
 
+def get_network_stats():
+    net = psutil.net_io_counters()
+    # Convert bytes to MB, rounded to 2 decimals
+    return {
+        'bytes_sent': round(net.bytes_sent / (1024 * 1024), 2),
+        'bytes_recv': round(net.bytes_recv / (1024 * 1024), 2)
+    }
+
 def get_system_info():
     uname = platform.uname()
     uptime = subprocess.check_output(['uptime', '-p']).decode('utf-8').strip()
@@ -17,6 +25,7 @@ def get_system_info():
     wifi_status = get_wifi_status()
     cpu_freq = psutil.cpu_freq().current if psutil.cpu_freq() else "N/A"
     cpu_voltage = get_cpu_voltage()
+    network = get_network_stats()
 
     system_info = {
         'linux_version': uname.system + " " + uname.release,
@@ -29,7 +38,8 @@ def get_system_info():
         'memory_usage': memory.percent,
         'swap_usage': swap.percent,
         'storage_usage': storage,
-        'wifi_status': wifi_status
+        'wifi_status': wifi_status,
+        'network': network
     }
     return system_info
 
