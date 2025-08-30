@@ -40,11 +40,12 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="section-title"><i class="fa fa-tachometer-alt icon"></i>CPU</div>
-                        <p><strong>Load:</strong> {{ system_info.cpu_load }}%</p>
+                        <p><strong>Load:</strong> <span id="cpu_load"></span>%</p>
                         <div class="progress">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ system_info.cpu_load }}%;" aria-valuenow="{{ system_info.cpu_load }}" aria-valuemin="0" aria-valuemax="100">{{ system_info.cpu_load }}%</div>
+                            <div id="cpu_load_bar" class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                         </div>
-                        <p class="mt-2"><strong>Temperature:</strong> {{ system_info.cpu_temperature }}°C</p>
+                        <p class="mt-2"><strong>Frequency:</strong> <span id="cpu_frequency"></span> MHz</p>
+                        <p><strong>Voltage:</strong> <span id="cpu_voltage"></span></p>
                     </div>
                 </div>
             </div>
@@ -55,7 +56,14 @@
                     <div class="card-body">
                         <div class="section-title"><i class="fa fa-thermometer-half icon"></i>Temperature</div>
                         <p><strong>CPU Temperature:</strong> {{ system_info.cpu_temperature }}°C</p>
-                        <!-- Add a gauge or progress bar if you want -->
+                        <div class="progress">
+                            <div class="progress-bar bg-danger" role="progressbar"
+                                 style="width: {{ ((system_info.cpu_temperature - 20) / 100) * 100 }}%;"
+                                 aria-valuenow="{{ system_info.cpu_temperature }}"
+                                 aria-valuemin="20" aria-valuemax="120">
+                                {{ system_info.cpu_temperature }}°C
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- Memory -->
@@ -118,5 +126,25 @@
             </div>
         </div>
     </div>
+
+    <script>
+    function updateSystemInfo() {
+        fetch('/api/system_info')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('cpu_load').textContent = data.cpu_load;
+                document.getElementById('cpu_load_bar').style.width = data.cpu_load + '%';
+                document.getElementById('cpu_load_bar').textContent = data.cpu_load + '%';
+                document.getElementById('cpu_frequency').textContent = data.cpu_frequency;
+                document.getElementById('cpu_voltage').textContent = data.cpu_voltage;
+                // Repeat for other fields...
+            });
+    }
+
+    // Initial load
+    updateSystemInfo();
+    // Update every 5 seconds
+    setInterval(updateSystemInfo, 5000);
+    </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, jsonify
 import psutil
 import platform
 import os
@@ -15,6 +15,8 @@ def get_system_info():
     swap = psutil.swap_memory()
     storage = get_storage_info()
     wifi_status = get_wifi_status()
+    cpu_freq = psutil.cpu_freq().current if psutil.cpu_freq() else "N/A"
+    cpu_voltage = get_cpu_voltage()
 
     system_info = {
         'linux_version': uname.system + " " + uname.release,
@@ -22,6 +24,8 @@ def get_system_info():
         'uptime': uptime,
         'cpu_load': cpu_load,
         'cpu_temperature': cpu_temp,
+        'cpu_frequency': cpu_freq,
+        'cpu_voltage': cpu_voltage,
         'memory_usage': memory.percent,
         'swap_usage': swap.percent,
         'storage_usage': storage,
@@ -52,7 +56,21 @@ def get_wifi_status():
     except Exception:
         return "Not connected"
 
+def get_cpu_voltage():
+    try:
+        # For Raspberry Pi, use vcgencmd if available
+        result = subprocess.check_output(['vcgencmd', 'measure_volts']).decode('utf-8').strip()
+        # Output is like: "volt=1.2000V"
+        return result.split('=')[1] if '=' in result else result
+    except Exception:
+        return "N/A"
+
 @bp.route('/')
 def index():
     system_info = get_system_info()
     return render_template('index.html', system_info=system_info)
+
+@bp.route('/api/system_info')
+def api_system_info():
+    system_info = get_system_info()
+    return jsonify(system_info)
